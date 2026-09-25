@@ -1,1 +1,10 @@
-{"name":"ЗОНА: Авторитет","short_name":"ЗОНА","start_url":"./index.html","display":"standalone","background_color":"#0b0d0e","theme_color":"#111315"}
+{
+  "name": "ZONA: Авторитет",
+  "short_name": "ZONA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#080808",
+  "theme_color": "#0d0d0d"
+}

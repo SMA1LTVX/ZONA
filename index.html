@@ -1,5 +1,131 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#111315"><title>ЗОНА: Авторитет</title><link rel="manifest" href="manifest.webmanifest"><style>
-*{box-sizing:border-box}body{margin:0;background:#0b0d0e;color:#eee;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:480px;margin:auto;min-height:100vh;background:linear-gradient(#171a1c,#0c0e0f);padding:env(safe-area-inset-top) 14px calc(84px + env(safe-area-inset-bottom))}.top{padding:16px 2px 12px}.brand{font-size:12px;letter-spacing:3px;color:#9ca3a8}.title{font-size:27px;font-weight:900;margin-top:2px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.stat,.card{background:#171a1d;border:1px solid #292d31;border-radius:14px}.stat{padding:10px;text-align:center}.stat b{display:block;font-size:17px}.stat span{font-size:11px;color:#9ba1a6}.hero{height:210px;margin:8px 0 12px;border-radius:18px;border:1px solid #34383c;overflow:hidden;position:relative;background:radial-gradient(circle at 70% 30%,#4a4d48 0,#242725 25%,#111 68%)}.bars{position:absolute;inset:14px}.avatar{position:absolute;right:26px;bottom:0;width:150px;height:180px;background:linear-gradient(150deg,#777 0 28%,#343434 29% 70%,#191919 71%);clip-path:polygon(30% 0,67% 0,76% 20%,91% 43%,80% 100%,13% 100%,4% 44%,23% 20%);opacity:.9}.rank{position:absolute;left:16px;bottom:16px}.rank small{color:#a7adaf}.rank strong{display:block;font-size:22px}.progress{height:7px;background:#282c2f;border-radius:20px;margin-top:6px;overflow:hidden}.progress i{display:block;height:100%;background:#b99052;width:0%}.section{font-weight:800;margin:16px 2px 8px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:1px solid #353a3e;background:#1b1f22;color:#fff;border-radius:14px;padding:15px 10px;font-weight:800;font-size:15px}.btn.primary{background:#9b743b;border-color:#b88c4d;color:#fff}.btn:active{transform:scale(.98)}.card{padding:14px}.job{display:flex;align-items:center;justify-content:space-between;gap:10px}.job p{margin:4px 0;color:#aeb3b6;font-size:13px}.job button{min-width:96px}.log{margin-top:10px;font-size:13px;color:#c9cdcf;min-height:42px}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);display:grid;grid-template-columns:repeat(4,1fr);padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#111416eF;border-top:1px solid #2b3033;backdrop-filter:blur(12px)}.nav button{border:0;background:none;color:#92999d;font-size:11px;padding:7px 2px}.nav b{display:block;font-size:20px;margin-bottom:2px}.overlay{display:none;position:fixed;inset:0;background:#080a0bd9;z-index:5;padding:40px 16px;overflow:auto}.overlay.show{display:block}.panel{max-width:450px;margin:auto;background:#171a1d;border:1px solid #34393d;border-radius:18px;padding:16px}.panel h2{margin-top:0}.item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #292e31}.close{width:100%;margin-top:14px}.boss{font-size:52px;text-align:center;margin:10px}.hp{font-size:12px;color:#bbb;text-align:center}
-</style></head><body><main class="app"><header class="top"><div class="brand">ЗОНА</div><div class="title">АВТОРИТЕТ</div><div class="stats"><div class="stat"><b id="money">250 ₽</b><span>наличные</span></div><div class="stat"><b id="energy">10/10</b><span>энергия</span></div><div class="stat"><b id="lvl">1</b><span>уровень</span></div></div></header><section class="hero"><div class="avatar"></div><div class="rank"><small>Твой статус</small><strong id="rank">Новичок</strong><div class="progress"><i id="xpbar"></i></div><small id="xptext">0 / 100 опыта</small></div></section><div class="section">Дела</div><section class="card"><div class="job"><div><b>Разгрузить передачу</b><p>−2 энергии · +20–45 ₽ · +12 опыта</p></div><button class="btn primary" id="work">Сделать</button></div><div class="log" id="log">Ты только прибыл. Начни с простых дел и заработай авторитет.</div></section><div class="section">Быстрые действия</div><div class="actions"><button class="btn" id="fight">⚔️ Первый бой</button><button class="btn" id="shop">🎒 Шмот</button></div></main><nav class="nav"><button id="nwork"><b>✊</b>Дела</button><button id="nfight"><b>⚔️</b>Бой</button><button id="nshop"><b>🎒</b>Шмот</button><button id="profile"><b>👤</b>Профиль</button></nav><div class="overlay" id="modal"><div class="panel" id="panel"></div></div><script>
-const S={money:250,energy:10,xp:0,lvl:1,power:5,items:[]};const $=id=>document.getElementById(id);function rank(){return S.lvl>=5?'Смотрящий':S.lvl>=3?'Бывалый':S.lvl>=2?'Свой':'Новичок'}function draw(){while(S.xp>=100){S.xp-=100;S.lvl++;S.energy=10;S.power+=2;$('log').textContent='Новый уровень! Энергия восстановлена.'}$('money').textContent=S.money+' ₽';$('energy').textContent=S.energy+'/10';$('lvl').textContent=S.lvl;$('rank').textContent=rank();$('xpbar').style.width=S.xp+'%';$('xptext').textContent=S.xp+' / 100 опыта'}function work(){if(S.energy<2){$('log').textContent='Энергия закончилась. В прототипе она восстанавливается при новом уровне.';return}let r=20+Math.floor(Math.random()*26);S.energy-=2;S.money+=r;S.xp+=12;$('log').textContent='Дело выполнено: +'+r+' ₽ и +12 опыта.';draw()}function open(html){$('panel').innerHTML=html+'<button class="btn close" id="close">Закрыть</button>';$('modal').classList.add('show');$('close').onclick=()=>$('modal').classList.remove('show')}function fight(){let hp=28+S.lvl*6;open('<h2>Первый противник</h2><div class="boss">🥊</div><div class="hp">Сила противника: '+hp+'</div><p>Твоя сила: '+S.power+'. На бой требуется 3 энергии.</p><button class="btn primary" id="hit">Вступить в бой</button>');$('hit').onclick=()=>{if(S.energy<3){alert('Не хватает энергии');return}S.energy-=3;let chance=Math.min(.85,.42+S.power/(hp*1.8));if(Math.random()<chance){let reward=80+S.lvl*15;S.money+=reward;S.xp+=30;$('log').textContent='Победа! +'+reward+' ₽, +30 опыта.';alert('Победа!')}else{$('log').textContent='Поражение. Усиль персонажа с помощью шмота.';alert('Поражение.')}draw();$('modal').classList.remove('show')}}function shop(){let items=[['Телогрейка',120,2],['Крепкие ботинки',220,4],['Перстень',400,7]];open('<h2>Шмот</h2><p>Экипировка навсегда увеличивает силу.</p>'+items.map((x,i)=>'<div class="item"><div><b>'+x[0]+'</b><br><small>+'+x[2]+' силы · '+x[1]+' ₽</small></div><button class="btn" data-buy="'+i+'">Купить</button></div>').join(''));document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{let x=items[+b.dataset.buy];if(S.items.includes(x[0]))return alert('Уже куплено');if(S.money<x[1])return alert('Не хватает денег');S.money-=x[1];S.power+=x[2];S.items.push(x[0]);draw();shop()})}function profile(){open('<h2>Профиль</h2><p><b>'+rank()+'</b> · уровень '+S.lvl+'</p><p>Сила: '+S.power+'</p><p>Шмот: '+(S.items.join(', ')||'пока пусто')+'</p><p>Это первая локальная версия. После подключения сервера здесь появятся аккаунт, сохранения и рейтинг.</p>')}$('work').onclick=work;$('nwork').onclick=()=>window.scrollTo({top:260,behavior:'smooth'});$('fight').onclick=$('nfight').onclick=fight;$('shop').onclick=$('nshop').onclick=shop;$('profile').onclick=profile;$('modal').onclick=e=>{if(e.target===$('modal'))$('modal').classList.remove('show')};draw();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
-</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>ZONA: Авторитет</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#080808;color:#fff;font-family:Arial,Helvetica,sans-serif;min-height:100%;overflow-x:hidden}
+body{display:flex;justify-content:center}
+#game{width:min(100%,1600px);min-height:100%;background:#111;position:relative}
+.scene{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#1a1510}
+.scene img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;pointer-events:none}
+.hud{position:absolute;left:1.2%;right:1.2%;top:1.4%;display:flex;gap:.65%;height:9.2%;z-index:4}
+.hudbox{background:linear-gradient(#272727,#111);border:2px solid #050505;box-shadow:inset 0 0 0 1px #555;border-radius:8px;display:flex;align-items:center;padding:0 1.1%;font-weight:800;text-shadow:0 2px 2px #000}
+.player{width:24%;gap:8px}.avatar{height:78%;aspect-ratio:1;border-radius:6px;background:#6d2c1c;display:grid;place-items:center;font-size:clamp(18px,3vw,42px)}
+.name{font-size:clamp(12px,1.65vw,28px)} .sub{font-size:clamp(8px,.8vw,14px);color:#bbb;margin-top:3px}
+.res{flex:1;justify-content:center;font-size:clamp(13px,1.55vw,28px);gap:8px}
+.energy{color:#ffb22b}.money{color:#8fe49a}.coin{color:#ffd45c}
+.hotspots{position:absolute;inset:0;z-index:5}
+.hot{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:10px}
+.hot:focus{outline:3px solid rgba(255,116,46,.9)}
+#tasksHot{right:1.2%;top:12%;width:25.8%;height:45%}
+#statsHot{right:1.2%;top:59%;width:25.8%;height:28%}
+#bossHot{left:49.5%;bottom:1.2%;width:12%;height:10%}
+#gearHot{left:1%;bottom:1.2%;width:12%;height:10%}
+#tattooHot{left:13.7%;bottom:1.2%;width:12%;height:10%}
+#dealsHot{left:26.5%;bottom:1.2%;width:12%;height:10%}
+#trainHot{left:39%;bottom:1.2%;width:10.5%;height:10%}
+#shopHot{right:1%;bottom:1.2%;width:12.5%;height:10%}
+#yardHot{left:1%;top:27%;width:13.5%;height:11%}
+#cellHot{left:1%;top:39%;width:13.5%;height:11%}
+.toast{position:absolute;z-index:20;left:50%;bottom:13%;transform:translateX(-50%);background:rgba(0,0,0,.9);border:1px solid #b14b26;border-radius:10px;padding:10px 16px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;max-width:85%;text-align:center}
+.toast.show{opacity:1}
+.modal{position:absolute;z-index:30;inset:7% 12%;background:linear-gradient(180deg,#24201b,#100e0c);border:3px solid #8c4929;border-radius:14px;box-shadow:0 10px 40px #000;display:none;overflow:auto}
+.modal.open{display:block}
+.modalHead{position:sticky;top:0;background:#1a1511;border-bottom:1px solid #6f3b25;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;z-index:2}
+.modalHead h2{margin:0;color:#f3c275;font-size:clamp(18px,2.3vw,34px)}
+.close{border:1px solid #8c4929;background:#38170f;color:#fff;border-radius:8px;min-width:44px;min-height:44px;font-size:22px}
+.content{padding:16px;display:grid;gap:12px}
+.card{background:#181818;border:1px solid #4b4038;border-radius:10px;padding:13px}
+.card h3{margin:0 0 7px}.muted{color:#aaa;font-size:14px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{border:1px solid #ff7440;background:linear-gradient(#c94a2b,#7f1f12);color:white;font-weight:800;border-radius:8px;padding:11px 15px;min-height:44px}
+.btn.secondary{background:linear-gradient(#3d3d3d,#1d1d1d);border-color:#666}
+.bar{height:12px;background:#080808;border-radius:99px;overflow:hidden;border:1px solid #444;margin-top:7px}.fill{height:100%;background:linear-gradient(90deg,#b93c24,#f08b3e)}
+.boss{display:grid;grid-template-columns:110px 1fr;gap:14px}.bossFace{aspect-ratio:1;background:#321b15;border:2px solid #8c4929;border-radius:10px;display:grid;place-items:center;font-size:54px}
+.shopgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.item{background:#161616;border:1px solid #51463f;border-radius:10px;padding:12px}
+.item .ico{font-size:38px}
+@media(max-width:700px){.modal{inset:4% 4%}.shopgrid{grid-template-columns:1fr}.hud{height:10%}.player{width:29%}.name{font-size:12px}.sub{display:none}.res{font-size:12px;padding:0 5px}.boss{grid-template-columns:75px 1fr}.bossFace{font-size:38px}}
+.rotate{display:none}
+@media(orientation:portrait) and (max-width:900px){.rotate{display:flex;position:fixed;inset:0;z-index:100;background:#0b0b0b;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:22px;font-weight:800}.rotate span{display:block;color:#f08b3e;margin-top:12px;font-size:50px}}
+</style>
+</head>
+<body>
+<div id="game">
+  <div class="scene">
+    <img src="./zona_cell.png" alt="Камера персонажа ZONA">
+    <div class="hud">
+      <div class="hudbox player"><div class="avatar">👤</div><div><div class="name">SMA1LTVX</div><div class="sub"><span id="status">Новенький</span> · ур. <span id="level">1</span></div></div></div>
+      <div class="hudbox res energy">⚡ <span id="energy">10</span>/10</div>
+      <div class="hudbox res money">💵 <span id="money">750</span></div>
+      <div class="hudbox res coin">🪙 <span id="coins">7</span></div>
+    </div>
+    <div class="hotspots">
+      <button class="hot" id="tasksHot" aria-label="Задания"></button>
+      <button class="hot" id="statsHot" aria-label="Характеристики"></button>
+      <button class="hot" id="bossHot" aria-label="Боссы"></button>
+      <button class="hot" id="gearHot" aria-label="Шмот"></button>
+      <button class="hot" id="tattooHot" aria-label="Наколки"></button>
+      <button class="hot" id="dealsHot" aria-label="Дела"></button>
+      <button class="hot" id="trainHot" aria-label="Тренировка"></button>
+      <button class="hot" id="shopHot" aria-label="Магазин"></button>
+      <button class="hot" id="yardHot" aria-label="Двор"></button>
+      <button class="hot" id="cellHot" aria-label="Камера"></button>
+    </div>
+    <div id="toast" class="toast" aria-live="polite"></div>
+    <section id="modal" class="modal" aria-modal="true" role="dialog">
+      <div class="modalHead"><h2 id="modalTitle">Раздел</h2><button id="close" class="close" type="button">×</button></div>
+      <div id="modalContent" class="content"></div>
+    </section>
+  </div>
+</div>
+<div class="rotate">Поверни iPhone горизонтально<span>↻</span></div>
+<script>
+(()=>{
+const KEY='zona-v02-save';
+let s={level:1,xp:0,energy:10,money:750,coins:7,power:5,def:5,authority:0,stamina:10,bossHp:70,gear:[],tattoos:[],done:0};
+try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x)s={...s,...x}}catch(e){}
+const $=id=>document.getElementById(id);
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(s));render()};
+const status=()=>s.authority>=100?'Авторитет':s.authority>=50?'Блатной':s.authority>=20?'Свой':'Новенький';
+function render(){ $('level').textContent=s.level;$('status').textContent=status();$('energy').textContent=s.energy;$('money').textContent=s.money;$('coins').textContent=s.coins; }
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(window.__zt);window.__zt=setTimeout(()=>e.classList.remove('show'),1800)}
+function gainXP(n){s.xp+=n;while(s.xp>=100){s.xp-=100;s.level++;s.energy=10;s.power++;toast('Новый уровень! '+s.level)}}
+function modal(title,html){$('modalTitle').textContent=title;$('modalContent').innerHTML=html;$('modal').classList.add('open');wire()}
+function task(name,cost,money,xp,auth){if(s.energy<cost){toast('Не хватает энергии');return}s.energy-=cost;s.money+=money;s.authority+=auth;s.done++;gainXP(xp);save();toast(name+': +'+money+' ₽, +'+xp+' опыта')}
+function tasks(){
+modal('МОИ ЗАДАНИЯ',`
+<div class="card"><h3>Познакомиться с соседом</h3><div class="muted">⚡ 1 · награда 50 ₽ · 10 опыта · 2 авторитета</div><div class="row"><span></span><button class="btn act" data-task="0">Выполнить</button></div></div>
+<div class="card"><h3>Убрать камеру</h3><div class="muted">⚡ 2 · награда 90 ₽ · 15 опыта · 3 авторитета</div><div class="row"><span></span><button class="btn act" data-task="1">Выполнить</button></div></div>
+<div class="card"><h3>Передать маляву</h3><div class="muted">⚡ 3 · награда 150 ₽ · 25 опыта · 5 авторитета</div><div class="row"><span></span><button class="btn act" data-task="2">Выполнить</button></div></div>
+<div class="card"><h3>Прогресс</h3><div>Выполнено дел: <b>${s.done}</b></div><div class="bar"><div class="fill" style="width:${Math.min(100,s.xp)}%"></div></div><div class="muted">${s.xp}/100 опыта до уровня</div></div>`) }
+function stats(){modal('ХАРАКТЕРИСТИКИ',`<div class="card"><h3>${status()} · уровень ${s.level}</h3><p>👊 Сила: <b>${s.power}</b></p><p>🛡️ Защита: <b>${s.def}</b></p><p>⭐ Авторитет: <b>${s.authority}</b></p><p>🟢 Выносливость: <b>${s.stamina}</b></p><p>⚡ Энергия: <b>${s.energy}/10</b></p></div><div class="card"><button class="btn secondary" id="rest">Отдохнуть (+5 энергии)</button><div class="muted">Для тестовой версии восстановление мгновенное.</div></div>`)}
+function bosses(){const max=70;modal('БОССЫ',`<div class="card boss"><div class="bossFace">😠</div><div><h3>ШРАМ</h3><div class="muted">Первый местный авторитет. Победи его, чтобы получить ключ от двора.</div><div class="bar"><div class="fill" style="width:${Math.max(0,s.bossHp/max*100)}%"></div></div><p>❤️ ${Math.max(0,s.bossHp)} / ${max}</p><button class="btn" id="hit">Ударить (⚡2)</button></div></div>`)}
+function shop(){modal('МАГАЗИН',`<div class="shopgrid">
+<div class="item"><div class="ico">🧥</div><h3>Кожанка</h3><div class="muted">+2 защита</div><button class="btn buy" data-price="350" data-kind="jacket">350 ₽</button></div>
+<div class="item"><div class="ico">🥾</div><h3>Берцы</h3><div class="muted">+2 сила</div><button class="btn buy" data-price="420" data-kind="boots">420 ₽</button></div>
+<div class="item"><div class="ico">⛓️</div><h3>Цепь</h3><div class="muted">+3 авторитета</div><button class="btn buy" data-price="300" data-kind="chain">300 ₽</button></div>
+<div class="item"><div class="ico">☕</div><h3>Чифирь</h3><div class="muted">+4 энергии</div><button class="btn buy" data-price="120" data-kind="tea">120 ₽</button></div></div>`)}
+function gear(){modal('ШМОТ',`<div class="card"><h3>Надето / найдено</h3><p>${s.gear.length?s.gear.join(', '):'Пока пусто. Загляни в магазин.'}</p></div>`)}
+function tattoos(){modal('НАКОЛКИ',`<div class="card"><h3>Коллекция наколок</h3><p>${s.tattoos.length?s.tattoos.join(', '):'Первая наколка выпадет с босса Шрама.'}</p></div>`)}
+function train(){modal('ТРЕНИРОВКА',`<div class="card"><h3>Качалка</h3><div class="muted">Тренировка стоит 3 энергии и даёт +1 силу.</div><button class="btn" id="trainBtn">Тренироваться</button></div>`)}
+function wire(){
+document.querySelectorAll('.act').forEach(b=>b.addEventListener('click',()=>{const a=[[1,50,10,2,'Сосед доволен'],[2,90,15,3,'Камера убрана'],[3,150,25,5,'Малява передана']][+b.dataset.task];task(a[4],a[0],a[1],a[2],a[3]);tasks()}));
+const r=$('rest');if(r)r.onclick=()=>{s.energy=Math.min(10,s.energy+5);save();stats();toast('Энергия восстановлена')};
+const h=$('hit');if(h)h.onclick=()=>{if(s.energy<2)return toast('Не хватает энергии');s.energy-=2;const dmg=Math.max(5,s.power+Math.floor(Math.random()*6));s.bossHp-=dmg;if(s.bossHp<=0){s.money+=500;s.authority+=15;s.tattoos.push('Череп Шрама');s.bossHp=70;toast('Шрам побеждён! +500 ₽ и наколка')}else toast('Урон: '+dmg);save();bosses()};
+document.querySelectorAll('.buy').forEach(b=>b.onclick=()=>{const p=+b.dataset.price;if(s.money<p)return toast('Не хватает денег');s.money-=p;const k=b.dataset.kind;if(k==='jacket'){s.def+=2;s.gear.push('Кожанка')}if(k==='boots'){s.power+=2;s.gear.push('Берцы')}if(k==='chain'){s.authority+=3;s.gear.push('Цепь')}if(k==='tea'){s.energy=Math.min(10,s.energy+4)}save();shop();toast('Куплено')});
+const tr=$('trainBtn');if(tr)tr.onclick=()=>{if(s.energy<3)return toast('Не хватает энергии');s.energy-=3;s.power++;gainXP(8);save();train();toast('+1 сила')};
+}
+$('close').onclick=()=> $('modal').classList.remove('open');
+$('tasksHot').onclick=tasks;$('statsHot').onclick=stats;$('dealsHot').onclick=tasks;$('bossHot').onclick=bosses;$('shopHot').onclick=shop;$('gearHot').onclick=gear;$('tattooHot').onclick=tattoos;$('trainHot').onclick=train;
+$('yardHot').onclick=()=>toast(s.authority>=20?'Двор открыт — раздел появится в следующей версии':'Нужен статус «Свой» (20 авторитета)');
+$('cellHot').onclick=()=>toast('Ты уже в своей камере');
+render();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+})();
+</script>
+</body></html>
